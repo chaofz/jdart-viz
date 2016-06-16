@@ -27,7 +27,8 @@ function formatSizeUnits(bytes) {
 function output(filename, size) {
   var fileList = $id('file-list');
   var li = document.createElement("li");
-  li.className = "file " + fileId;
+  li.className = "file"
+  li.id = fileId;
   li.innerHTML =
     '<strong>' + filename + '</strong>, ' + size +
     '<span class="file-status">' + // '<span class="open-file">load</span>' +
@@ -54,11 +55,11 @@ function openFile(e) {
   var prevSelected = document.getElementsByClassName('selected')[0];
   if (typeof(prevSelected) === "undefined") {
     target.classList.add("selected");
-  } else if (prevSelected.classList[1] !== target.classList[1]) {
+  } else if (prevSelected.id !== target.id) {
     prevSelected.classList.remove("selected");
     target.classList.add("selected");
   }
-  loadChart(jsonList[target.classList[1]]);
+  loadChart(jsonList[target.id]);
 }
 
 function deleteFile(e) {
@@ -96,7 +97,7 @@ function fileSelectHandler(e) {
     (function(file, newFileLi) {
       readFile(file, newFileLi, function(json) {
         addClickListeners(newFileLi);
-        jsonList[newFileLi.classList[1]] = json;
+        jsonList[newFileLi.id] = json;
       });
     })(file, newFileLi);
   }
@@ -129,17 +130,17 @@ function readFile(file, index, callback) {
 function loadDemo() {
   d3.json("data/demo1.json", function(json) {
     var newFileLi = output("demo1.json", formatSizeUnits(1229));
-    jsonList[newFileLi.classList[1]] = json;
+    jsonList[newFileLi.id] = json;
     addClickListeners(newFileLi);
   });
   d3.json("data/demo2.json", function(json) {
     var newFileLi = output("demo2.json", formatSizeUnits(2145));
-    jsonList[newFileLi.classList[1]] = json;
+    jsonList[newFileLi.id] = json;
     addClickListeners(newFileLi);
   });
   d3.json("data/demo3.json", function(json) {
     var newFileLi = output("demo3.json", formatSizeUnits(14538240));
-    jsonList[newFileLi.classList[1]] = json;
+    jsonList[newFileLi.id] = json;
     addClickListeners(newFileLi);
   });
 }

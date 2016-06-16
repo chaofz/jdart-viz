@@ -15,7 +15,7 @@ var fileDrag = d3.select('#filedrag');
 
 sidebar.style('width', (panelWidth - w - 15) + 'px');
 sidebar.style('height', panelHeight + 'px');
-fileDrag.style('height', panelHeight - 33 + 'px');
+fileDrag.style('height', panelHeight - 31 + 'px');
 
 var tree = d3.layout.tree()
   .size([h, 100]);
