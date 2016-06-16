@@ -1,0 +1,83 @@
+{
+  "branch": "",
+  "decision": "('i' < 0)",
+  "children": [
+    {
+      "branch": "true",
+      "decision": "null",
+      "result": "ERROR: java.lang.AssertionError"
+    },
+    {
+      "branch": "false",
+      "decision": "('i' >= 2)",
+      "children": [
+        {
+          "branch": "true",
+          "decision": "('i' != 2)",
+          "children": [
+            {
+              "branch": "true",
+              "decision": "null",
+              "result": "ERROR: java.lang.AssertionError"
+            },
+            {
+              "branch": "false",
+              "decision": "('f1' != 'f2')",
+              "children": [
+                {
+                  "branch": "true",
+                  "decision": "('f2' != 'f3')",
+                  "children": [
+                    {
+                      "branch": "true",
+                      "decision": "null",
+                      "result": "OK: [  ]"
+                    },
+                    {
+                      "branch": "false",
+                      "decision": "null",
+                      "result": "OK: [  ]"
+                    }
+                  ]
+                },
+                {
+                  "branch": "false",
+                  "decision": "('f2' != 'f3')",
+                  "children": [
+                    {
+                      "branch": "true",
+                      "decision": "null",
+                      "result": "OK: [  ]"
+                    },
+                    {
+                      "branch": "false",
+                      "decision": "null",
+                      "result": "OK: [  ]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "branch": "false",
+          "decision": "((double)'f2' != 3.141)",
+          "children": [
+            {
+              "branch": "true",
+              "decision": "null",
+              "result": "ERROR: java.lang.AssertionError"
+            },
+            {
+              "branch": "false",
+              "decision": "null",
+              "result": "DONT_KNOW"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,7 @@
+-('i' <= 200000)
+  |-[+]_/OK: [ this.state:='this.k[1]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]
+  +-[-]-!'this.b'
+        |-[+]_/OK: [ this.state:='this.k[0]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]
+        +-[-]-('this.k[0]' != 'this.k[1]')
+              |-[+]_/OK: [ this.state:='this.k[0]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]
+              +-[-]_/OK: [ this.state:='this.k[0]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]

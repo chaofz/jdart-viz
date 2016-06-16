@@ -1,0 +1,15 @@
+-('i' < 0)
+  |-[+]_/ERROR: java.lang.AssertionError
+  +-[-]-('i' >= 2)
+        |-[+]-('i' != 2)
+        |      |-[+]_/ERROR: java.lang.AssertionError
+        |      +-[-]-('f1' != 'f2')
+        |            |-[+]-('f2' != 'f3')
+        |            |      |-[+]_/OK: [  ]
+        |            |      +-[-]_/OK: [  ]
+        |            +-[-]-('f2' != 'f3')
+        |                  |-[+]_/OK: [  ]
+        |                  +-[-]_/OK: [  ]
+        +-[-]-((double)'f2' != 3.141)
+              |-[+]_/ERROR: java.lang.AssertionError
+              +-[-]_/DONT_KNOW

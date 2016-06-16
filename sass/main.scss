@@ -1,0 +1,13 @@
+@import "chart";
+@import "sidebar";
+body {
+  font-family: "Segoe UI", Tahoma, Helvetica, freesans, sans-serif;
+
+  .panel {
+    position: absolute;
+    top: 10px;
+    bottom: 20px;
+    left: 13px;
+    right: 10px;
+  }
+}

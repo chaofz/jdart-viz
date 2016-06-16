@@ -1,0 +1,39 @@
+{
+  "branch": "",
+  "decision": "('i' <= 200000)",
+  "children": [
+    {
+      "branch": "true",
+      "decision": "null",
+      "result": "OK: [ this.state:='this.k[1]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]"
+    },
+    {
+      "branch": "false",
+      "decision": "!'this.b'",
+      "children": [
+        {
+          "branch": "true",
+          "decision": "null",
+          "result": "OK: [ this.state:='this.k[0]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]"
+        },
+        {
+          "branch": "false",
+          "decision": "('this.k[0]' != 'this.k[1]')",
+          "children": [
+            {
+              "branch": "true",
+              "decision": "null",
+              "result": "OK: [ this.state:='this.k[0]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]"
+            },
+            {
+              "branch": "false",
+              "decision": "null",
+              "result": "OK: [ this.state:='this.k[0]', this.k[1]:='this.k[1]', this.b:='this.b', this.k[0]:='this.k[0]', this.k[2]:='this.k[2]',  ]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
