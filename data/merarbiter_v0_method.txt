@@ -1,0 +1,71 @@
+  public void runMachines(int user1_1_1, boolean user1_2_1, int user2_1_1, boolean user2_2_1,
+                          int user1_1_2, boolean user1_2_2, int user2_1_2, boolean user2_2_2,
+                          int user1_1_3, boolean user1_2_3, int user2_1_3, boolean user2_2_3,
+                          int user1_1_4, boolean user1_2_4, int user2_1_4, boolean user2_2_4) {
+    this.user1.r1.User122.resourceIn = 1;
+    this.user1.r1.User122.grant = false;
+    this.user1.r1.User122.deny = false;
+    this.user1.r1.User122.rescind = false;
+    this.user1.r1.User122.reset = false;
+
+    this.user2.r1.User228.resourceIn = 0;
+    this.user2.r1.User228.grant = false;
+    this.user2.r1.User228.deny = false;
+    this.user2.r1.User228.rescind = false;
+    this.user2.r1.User228.reset = false;
+
+    Event e = new Event("");
+
+    this.user1.sim.addEvent(e);
+    this.user1.sim.step();
+    this.user2.sim.addEvent(e);
+    this.user2.sim.step();
+    this.setArbiterInput();
+    this.arbiter.sim.addEvent(e);
+    this.arbiter.sim.step();
+
+
+//    System.out.println("i = " + i);
+    this.setUser1Input(user1_1_1,user1_2_1);
+    this.setUser2Input(user2_1_1,user2_2_1);
+    this.user1.sim.addEvent(e);
+    this.user1.sim.step();
+    this.user2.sim.addEvent(e);
+    this.user2.sim.step();
+    this.setArbiterInput();
+    this.arbiter.sim.addEvent(e);
+    this.arbiter.sim.step();
+    
+  //  System.out.println("i = " + i);
+    this.setUser1Input(user1_1_2,user1_2_2);
+    this.setUser2Input(user2_1_2,user2_2_2);
+    this.user1.sim.addEvent(e);
+    this.user1.sim.step();
+    this.user2.sim.addEvent(e);
+    this.user2.sim.step();
+    this.setArbiterInput();
+    this.arbiter.sim.addEvent(e);
+    this.arbiter.sim.step();
+    
+    //System.out.println("i = " + i);
+    this.setUser1Input(user1_1_3,user1_2_3);
+    this.setUser2Input(user2_1_3,user2_2_3);
+    this.user1.sim.addEvent(e);
+    this.user1.sim.step();
+    this.user2.sim.addEvent(e);
+    this.user2.sim.step();
+    this.setArbiterInput();
+    this.arbiter.sim.addEvent(e);
+    this.arbiter.sim.step();
+    
+    //System.out.println("i = " + i);
+    this.setUser1Input(user1_1_3,user1_2_3);
+    this.setUser2Input(user2_1_3,user2_2_3);
+    this.user1.sim.addEvent(e);
+    this.user1.sim.step();
+    this.user2.sim.addEvent(e);
+    this.user2.sim.step();
+    this.setArbiterInput();
+    this.arbiter.sim.addEvent(e);
+    this.arbiter.sim.step();
+  }

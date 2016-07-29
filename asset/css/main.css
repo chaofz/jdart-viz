@@ -1,0 +1,82 @@
+.component, #code-area #code, #chart-area #chart {
+  position: absolute;
+  top: 30px;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+
+.area-title {
+  text-align: center;
+  font-weight: bold;
+  color: #333; }
+
+.pull-right {
+  position: absolute;
+  right: 20px; }
+
+body {
+  font-weight: 400;
+  font-family: "Lato", sans-serif; }
+  body .panel {
+    position: absolute;
+    top: 30px;
+    bottom: 51px;
+    left: 20px;
+    right: 20px; }
+
+#code-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 450px; }
+  #code-area #code {
+    padding-top: 10px;
+    font-size: 12px;
+    min-width: 200px;
+    border-radius: 5px;
+    overflow: auto;
+    background: #2c2c27;
+    color: #f8f8f2;
+    line-height: 1.5; }
+    #code-area #code .code-line {
+      padding: 0 10px;
+      display: block; }
+    #code-area #code .highlight {
+      background: #40c8ff;
+      color: #000; }
+
+#chart-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 463px;
+  right: 0; }
+  #chart-area #tools {
+    position: absolute;
+    top: 0;
+    width: 100%; }
+  #chart-area .left {
+    float: left; }
+  #chart-area .right {
+    float: right;
+    margin-left: 5px; }
+  #chart-area #checkbox {
+    font-size: 12px; }
+  #chart-area #chart {
+    min-width: 400px;
+    border: 1px solid #bbb;
+    border-radius: 5px; }
+    #chart-area #chart .node rect {
+      fill-opacity: 0.5;
+      stroke: #3182bd;
+      stroke-width: 1px; }
+    #chart-area #chart .node text {
+      font-size: 14px;
+      pointer-events: none; }
+    #chart-area #chart path.link {
+      fill: none;
+      stroke: #9ecae1;
+      stroke-width: 1px; }
+    #chart-area #chart text {
+      z-index: -1; }

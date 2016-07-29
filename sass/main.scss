@@ -1,13 +1,115 @@
-@import "chart";
-@import "sidebar";
+@import "predefine";
+// @import "sidebar";
 body {
-  font-family: "Segoe UI", Tahoma, Helvetica, freesans, sans-serif;
-
+  font-weight: 400;
+  font-family: "Lato", sans-serif;
   .panel {
     position: absolute;
-    top: 10px;
-    bottom: 20px;
-    left: 13px;
-    right: 10px;
+    top: 30px;
+    bottom: 51px;
+    left: 20px;
+    right: 20px;
+  }
+}
+
+#code-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 450px;
+  #code {
+    @extend .component;
+    padding-top: 10px;
+    font-size: 12px;
+    min-width: 200px;
+    // border: 1px solid #bbb;
+    border-radius: 5px;
+    overflow: auto;
+    background: rgba(44, 44, 39, 1);
+    color: rgba(248, 248, 242, 1);
+    line-height: 1.5;
+    .code-line {
+      padding: 0 10px;
+      display: block;
+    }
+    .highlight {
+      background: rgba(64, 200, 255, 1);
+      color: #000;
+    }
+  }
+}
+
+#chart-area {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 463px;
+  right: 0;
+  // min-width: 400px;
+  #tools {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  .left {
+    float: left;
+  }
+  .right {
+    float: right;
+    margin-left: 5px;
+  }
+  // #expand-errors {
+  //   position: absolute;
+  //   top: 0;
+  //   right: 5px;
+  // }
+  // #expand-dontknow {
+  //   position: absolute;
+  //   top: 0;
+  //   right: 95px;
+  // }
+  // #expand-ok {
+  //   position: absolute;
+  //   top: 0;
+  //   right: 222px;
+  // }
+  #checkbox {
+    font-size: 12px;
+  }
+  //   position: absolute;
+  //   top: 0;
+  //   right: 310px;
+  //   cursor: default;
+  // }
+  // #switch-demo {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 5px;
+  // }
+  #chart {
+    @extend .component;
+    min-width: 400px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    // overflow: auto;
+    .node rect {
+      fill-opacity: 0.5;
+      stroke: #3182bd;
+      stroke-width: 1px;
+      // cursor: pointer;
+    }
+    .node text {
+      font-size: 14px;
+      pointer-events: none;
+    }
+    path.link {
+      fill: none;
+      stroke: #9ecae1;
+      stroke-width: 1px;
+    }
+    text {
+      z-index: -1;
+    }
   }
 }
