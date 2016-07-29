@@ -1,0 +1,72 @@
+{
+  "branch": "",
+  "decision": "('i' != 0)",
+  "lineNumber": "44",
+  "children": [
+    {
+      "branch": "true",
+      "decision": "('i' < 1)",
+      "lineNumber": "50",
+      "children": [
+        {
+          "branch": "true",
+          "decision": "null",
+          "lineNumber": "0",
+          "result": "OK: [ c[1]:='c[1]', c[2]:='c[2]', c[0]:='c[0]', c[5]:='c[5]', c[3]:='c[3]', c[4]:='c[4]',  ]"
+        },
+        {
+          "branch": "false",
+          "decision": "('i' > 4)",
+          "lineNumber": "50",
+          "children": [
+            {
+              "branch": "true",
+              "decision": "null",
+              "lineNumber": "0",
+              "result": "OK: [ c[1]:='c[1]', c[2]:='c[2]', c[0]:='c[0]', c[5]:='c[5]', c[3]:='c[3]', c[4]:='c[4]',  ]"
+            },
+            {
+              "branch": "false",
+              "decision": "((sint32)'c[2]' == (sint32)'c[3]')",
+              "lineNumber": "50",
+              "children": [
+                {
+                  "branch": "true",
+                  "decision": "null",
+                  "lineNumber": "0",
+                  "result": "OK: [ c[1]:='c[1]', c[2]:='c[2]', c[0]:='c[0]', c[5]:='c[5]', c[3]:='c[3]', c[4]:='c[4]',  ]"
+                },
+                {
+                  "branch": "false",
+                  "decision": "null",
+                  "lineNumber": "0",
+                  "result": "OK: [ c[1]:='c[1]', c[2]:='c[2]', c[0]:='c[0]', c[5]:='c[5]', c[3]:='c[3]', c[4]:='c[4]',  ]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "branch": "false",
+      "decision": "((sint32)'c[0]' != (sint32)'c[1]')",
+      "lineNumber": "45",
+      "children": [
+        {
+          "branch": "true",
+          "decision": "null",
+          "lineNumber": "0",
+          "result": "OK: [ c[1]:='c[1]', c[2]:='c[2]', c[0]:='c[0]', c[5]:='c[5]', c[3]:='c[3]', c[4]:='c[4]',  ]"
+        },
+        {
+          "branch": "false",
+          "decision": "null",
+          "lineNumber": "0",
+          "result": "OK: [ c[1]:='c[1]', c[2]:='c[2]', c[0]:='c[0]', c[5]:='c[5]', c[3]:='c[3]', c[4]:='c[4]',  ]"
+        }
+      ]
+    }
+  ]
+}
+

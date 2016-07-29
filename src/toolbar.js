@@ -4,7 +4,6 @@ var visChart = require('./vis-chart');
 var id = 0;
 var simpleJson;
 var complexJson;
-var currDemo;
 
 function $id(id) {
   return document.getElementById(id);
@@ -20,39 +19,55 @@ function outputCodeLine(line, i) {
   code.appendChild(span);
 }
 
-function switchDemo() {
-  if (currDemo === 'simple') {
-    if (!complexJson) {
-      d3.json("data/merarbiter_v0.json", function(json) {
-        preprocessJson(json);
-        complexJson = json;
-        visChart.loadJsonToChart(json);
-      });
-    } else {
-      visChart.loadJsonToChart(complexJson);
-    }
-    $id('switch-demo').innerHTML = 'Switch to Simple Demo';
-    currDemo = 'complex';
+function largeDemo() {
+  if (!complexJson) {
+    d3.json("data/merarbiter_v0.json", function(json) {
+      preprocessJson(json);
+      complexJson = json;
+      visChart.loadJsonToChart(json);
+    });
   } else {
-    visChart.loadJsonToChart(simpleJson);
-    currDemo = 'simple';
+    visChart.loadJsonToChart(complexJson);
   }
 }
 
+function smallDemo() {
+  if (!simpleJson) {
+    d3.json("data/demo2.json", function(json) {
+      preprocessJson(json);
+      simpleJson = json;
+      visChart.loadJsonToChart(json);
+    });
+  } else {
+    visChart.loadJsonToChart(simpleJson);
+  }
+  json.code.forEach(function(line, i) {
+    outputCodeLine(line, i + 1);
+  });
+}
+
 function init() {
-  d3.json("data/demo2.json", function(json) {
-    preprocessJson(json);
+  var target = 'data/';
+  if (location.pathname === '/') {
+    target += 'demo2.json';
     simpleJson = json;
-    visChart.loadJsonToChart(json);
-    currDemo = 'simple';
     json.code.forEach(function(line, i) {
       outputCodeLine(line, i + 1);
     });
+  } else {
+    target += location.pathname.substring(1);
+  }
+
+  d3.json(target, function(json) {
+    preprocessJson(json);
+    visChart.loadJsonToChart(json);
   });
+
   $id('expand-errors').onclick = visChart.expandErrors;
   $id('expand-ok').onclick = visChart.expandOK;
   $id('expand-dontknow').onclick = visChart.expandDontKnow;
-  $id('switch-demo').onclick = switchDemo;
+  $id('small-demo').onclick = smallDemo;
+  $id('large-demo').onclick = largeDemo;
 }
 
 function preprocessJson(obj) {

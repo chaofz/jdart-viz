@@ -2,15 +2,15 @@
   "name": "jdart-vis",
   "version": "1.0.0",
   "description": "JDart Visualization Tool",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Chaofeng Zhou",
   "license": "ISC",
   "dependencies": {
     "d3": "^3.5.17",
-    "font-awesome": "^4.6.3"
+    "express": "^4.14.0",
+    "open": "0.0.5"
   },
   "devDependencies": {
     "browser-sync": "^2.13.0",
@@ -20,5 +20,9 @@
     "gulp-sass": "^2.3.2",
     "gulp-uglify": "^1.5.3",
     "gulp-webpack": "^1.5.0"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "jdart-vis": "index.js"
   }
 }

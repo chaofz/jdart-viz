@@ -54,6 +54,7 @@ body {
   }
   .left {
     float: left;
+    margin-right: 5px;
   }
   .right {
     float: right;
@@ -93,6 +94,7 @@ body {
     border: 1px solid #bbb;
     border-radius: 5px;
     // overflow: auto;
+    // cursor: pointer;
     .node rect {
       fill-opacity: 0.5;
       stroke: #3182bd;
