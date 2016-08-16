@@ -1,4 +1,4 @@
+node_modules/
+dist/
+gsoc/
 sftp-config.json
-node_modules
-dist
-

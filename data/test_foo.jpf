@@ -1,0 +1,20 @@
+{
+  "branch": "",
+  "decision": "((((double)'i' / 180.0) * 3.141592653589793) <= 0.0)",
+  "lineNumber": "26",
+  "children": [
+    {
+      "branch": "true",
+      "decision": "null",
+      "lineNumber": "0",
+      "result": "OK: [  ]"
+    },
+    {
+      "branch": "false",
+      "decision": "null",
+      "lineNumber": "0",
+      "result": "OK: [  ]"
+    }
+  ]
+}
+

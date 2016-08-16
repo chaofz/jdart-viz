@@ -46,6 +46,8 @@ gulp.task('browser:watch', ['browserSync'], function() {
   gulp.watch('*.html', browserSync.reload);
   gulp.watch('asset/css/**/*.css', browserSync.reload);
   gulp.watch('asset/js/**/*.js', browserSync.reload);
+
+  gulp.watch('gsoc/*', browserSync.reload);
 });
 
 gulp.task('dev', ['browser:watch', 'webpack:watch', 'sass:watch']);

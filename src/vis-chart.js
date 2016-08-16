@@ -63,16 +63,13 @@ function moveChildren(node) {
 }
 
 function update(source) {
-  // Compute the flattened node list. TODO use d3.layout.hierarchy.
   var nodes = tree.nodes(root);
   var currentHeight = 0;
 
-  // Compute the "layout".
   nodes.forEach(function(n, i) {
     n.x = i * barHeight;
   });
 
-  // Update the nodes…
   var node = vis.selectAll("g.node")
     .data(nodes, function(d) {
       return d.id || (d.id = ++i);
@@ -107,45 +104,10 @@ function update(source) {
       return d.result;
     });
 
-  function constraintParser(constraint) {
-    var result = constraint.substring(1, constraint.length - 1);
-    result = result.split("'").join("");
-    result = result.split("(double)").join("");
-    return result;
-  }
-
-  // nodeEnter.append("text")
-  //   .attr("dy", 7)
-  //   .attr("dx", barWidth - 40)
-  //   .style("font-family", "FontAwesome")
-  //   .style('font-size', "18px")
-  //   .attr('collapsed', "no")
-  //   .text(function(d) {
-  //     if(d._children) {
-  //       return '\uf114';
-  //     } else if(d.children){
-  //       return '\uf115';
-  //     } else {
-  //       return '';
-  //     }
-  //   })
-  //   .on("click", iconClick);
-
-  function iconClick(d) {
-    var icon = d3.select(this);
-    if (icon.attr('collapsed') === 'no') {
-      icon.text('\uf115').attr('collapsed', "yes");
-    } else {
-      icon.text('\uf114').attr('collapsed', "no");
-    }
-    collapseDesds(d);
-  }
-
   // Transition nodes to their new position.
   nodeEnter.transition()
     .duration(duration)
     .attr("transform", function(d) {
-      // updateSvgHeight(d);
       return "translate(" + d.y + "," + d.x + ")";
     })
     .style("opacity", 1);
@@ -153,7 +115,6 @@ function update(source) {
   node.transition()
     .duration(duration)
     .attr("transform", function(d) {
-      // updateSvgHeight(d);
       return "translate(" + d.y + "," + d.x + ")";
     })
     .style("opacity", 1)
@@ -164,68 +125,16 @@ function update(source) {
   node.exit().transition()
     .duration(duration)
     .attr("transform", function(d) {
-      // updateSvgHeight(d);
       return "translate(" + source.y + "," + source.x + ")";
     })
     .style("opacity", 1e-6)
     .remove();
-
-  // Update the links…
-  // var link = vis.selectAll("path.link")
-  //   .data(tree.links(nodes), function(d) {
-  //     return d.target.id;
-  //   });
-
-  // // Enter any new links at the parent's previous position.
-  // link.enter().insert("path", "g")
-  //   .attr("class", "link")
-  //   .attr("d", function(d) {
-  //     var o = {
-  //       x: source.x0,
-  //       y: source.y0
-  //     };
-  //     return diagonal({
-  //       source: o,
-  //       target: o
-  //     });
-  //   })
-  //   .transition()
-  //   .duration(duration)
-  //   .attr("d", diagonal);
-
-  // // Transition links to their new position.
-  // link.transition()
-  //   .duration(duration)
-  //   .attr("d", diagonal);
-
-  // // Transition exiting nodes to the parent's new position.
-  // link.exit().transition()
-  //   .duration(duration)
-  //   .attr("d", function(d) {
-  //     var o = {
-  //       x: source.x,
-  //       y: source.y
-  //     };
-  //     return diagonal({
-  //       source: o,
-  //       target: o
-  //     });
-  //   })
-  //   .remove();
 
   // Stash the old positions for transition.
   nodes.forEach(function(d) {
     d.x0 = d.x;
     d.y0 = d.y;
   });
-
-  // function updateSvgHeight(d) {
-  //   if (d.x > currentHeight) {
-  //     currentHeight = d.x;
-  //     // chartSvg.attr("height", currentHeight + 100);
-  //     chartSvg.attr("height", chartAreaHeight);
-  //   }
-  // }
 }
 
 // function collapseDesds(d) {
@@ -297,19 +206,16 @@ function updateAll(node) {
 exports.expandErrors = function() {
   expandErr(json, 'error');
   update(json);
-  // errExpanded = true;
 }
 
 exports.expandOK = function() {
   expandErr(json, 'ok');
   update(json);
-  // errExpanded = true;
 }
 
 exports.expandDontKnow = function() {
   expandErr(json, 'dontknow');
   update(json);
-  // errExpanded = true;
 }
 
 function expandErr(d, filter) {
@@ -349,6 +255,13 @@ function color(d) {
   if (d.result && d.result.startsWith("OK")) return "#5f5";
   if (d.result && d.result.startsWith("ERROR")) return "#f00";
   else return "#fd8d3c";
+}
+
+function constraintParser(constraint) {
+  var result = constraint.substring(1, constraint.length - 1);
+  result = result.split("'").join("");
+  result = result.split("(double)").join("");
+  return result;
 }
 
 exports.loadJsonToChart = function(_json) {

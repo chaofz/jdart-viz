@@ -1,0 +1,28 @@
+{
+  "branch": "",
+  "decision": "('i' < 0)",
+  "children": [
+    {
+      "branch": "true",
+      "decision": "null",
+      "result": "ERROR: java.lang.AssertionError"
+    },
+    {
+      "branch": "false",
+      "decision": "('d[1]' != 3.141)",
+      "children": [
+        {
+          "branch": "true",
+          "decision": "null",
+          "result": "ERROR: java.lang.AssertionError"
+        },
+        {
+          "branch": "false",
+          "decision": "null",
+          "result": "DONT_KNOW"
+        }
+      ]
+    }
+  ]
+}
+

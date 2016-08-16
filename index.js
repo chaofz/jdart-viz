@@ -4,6 +4,7 @@ var path = require('path');
 var open = require("open");
 var express = require('express');
 var exec = require('child_process').exec;
+var MAX_BUFFER = 1024 * 1024 * 30;
 
 var dir = path.join(__dirname);
 var userArgs = process.argv.slice(2);
@@ -21,7 +22,11 @@ if (target === 'serve') {
     console.log('Jdart Vis is listening on port 3000.');
   });
 } else {
-  exec('jpf ' + target, function(err, stdout, stderr) {
+  console.log('Executing jpf');
+  exec('jpf ' + target, {maxBuffer: MAX_BUFFER}, function(err, stdout, stderr) {
+    if(err) {
+      console.log(err);
+    }
     exec('mv tree.json ~/jdart-vis/data/' + target, function(err, stdout, stderr) {
       open("http://localhost:3000/" + target);
     });

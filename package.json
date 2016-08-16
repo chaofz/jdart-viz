@@ -1,5 +1,5 @@
 {
-  "name": "jdart-vis",
+  "name": "jdart-viz",
   "version": "1.0.0",
   "description": "JDart Visualization Tool",
   "scripts": {
@@ -23,6 +23,6 @@
   },
   "preferGlobal": true,
   "bin": {
-    "jdart-vis": "index.js"
+    "jdart-viz": "index.js"
   }
 }

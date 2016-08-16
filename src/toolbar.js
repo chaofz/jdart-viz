@@ -21,7 +21,7 @@ function outputCodeLine(line, i) {
 
 function largeDemo() {
   if (!complexJson) {
-    d3.json("data/merarbiter_v0.json", function(json) {
+    d3.json("data/demo3.json", function(json) {
       preprocessJson(json);
       complexJson = json;
       visChart.loadJsonToChart(json);
@@ -48,15 +48,15 @@ function smallDemo() {
 
 function init() {
   var target = 'data/';
-  if (location.pathname === '/') {
-    target += 'demo2.json';
-    simpleJson = json;
-    json.code.forEach(function(line, i) {
-      outputCodeLine(line, i + 1);
-    });
-  } else {
+  // if (location.pathname === '/') {
+  //   target += 'demo2.json';
+  //   // simpleJson = json;
+  //   json.code.forEach(function(line, i) {
+  //     outputCodeLine(line, i + 1);
+  //   });
+  // } else {
     target += location.pathname.substring(1);
-  }
+  // }
 
   d3.json(target, function(json) {
     preprocessJson(json);

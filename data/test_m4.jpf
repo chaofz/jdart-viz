@@ -1,0 +1,98 @@
+{
+  "branch": "",
+  "decision": "('i' < 0)",
+  "lineNumber": "75",
+  "children": [
+    {
+      "branch": "true",
+      "decision": "null",
+      "lineNumber": "0",
+      "result": "ERROR: java.lang.AssertionError"
+    },
+    {
+      "branch": "false",
+      "decision": "('i' >= 2)",
+      "lineNumber": "75",
+      "children": [
+        {
+          "branch": "true",
+          "decision": "('i' != 2)",
+          "lineNumber": "77",
+          "children": [
+            {
+              "branch": "true",
+              "decision": "null",
+              "lineNumber": "0",
+              "result": "ERROR: java.lang.AssertionError"
+            },
+            {
+              "branch": "false",
+              "decision": "('f1' != 'f2')",
+              "lineNumber": "80",
+              "children": [
+                {
+                  "branch": "true",
+                  "decision": "('f2' != 'f3')",
+                  "lineNumber": "85",
+                  "children": [
+                    {
+                      "branch": "true",
+                      "decision": "null",
+                      "lineNumber": "0",
+                      "result": "OK: [  ]"
+                    },
+                    {
+                      "branch": "false",
+                      "decision": "null",
+                      "lineNumber": "0",
+                      "result": "OK: [  ]"
+                    }
+                  ]
+                },
+                {
+                  "branch": "false",
+                  "decision": "('f2' != 'f3')",
+                  "lineNumber": "85",
+                  "children": [
+                    {
+                      "branch": "true",
+                      "decision": "null",
+                      "lineNumber": "0",
+                      "result": "OK: [  ]"
+                    },
+                    {
+                      "branch": "false",
+                      "decision": "null",
+                      "lineNumber": "0",
+                      "result": "OK: [  ]"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "branch": "false",
+          "decision": "((double)'f2' != 3.141)",
+          "lineNumber": "75",
+          "children": [
+            {
+              "branch": "true",
+              "decision": "null",
+              "lineNumber": "0",
+              "result": "ERROR: java.lang.AssertionError"
+            },
+            {
+              "branch": "false",
+              "decision": "null",
+              "lineNumber": "0",
+              "result": "DONT_KNOW"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

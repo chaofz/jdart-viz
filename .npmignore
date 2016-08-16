@@ -1,0 +1,6 @@
+sass/
+src/
+.git
+.gitignore
+gulpfile.js
+README.md
