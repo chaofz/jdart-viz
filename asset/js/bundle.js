@@ -55,7 +55,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var d3 = __webpack_require__(2);
-	var svgScrollerLib = __webpack_require__(3);
+	var utils = __webpack_require__(5);
 
 	var chartAreaWidth = parseInt(d3.select('#chart').style('width'));
 	var chartAreaHeight = parseInt(d3.select('#chart').style('height'));
@@ -63,25 +63,15 @@
 	var root;
 	var json;
 	var i = 0;
-	// var errExpanded = false;
 	var barHeight = 30;
 	var barWidth = chartAreaWidth - 150;
 	var duration = 400;
 	var tree = d3.layout.tree()
 	  .size([chartAreaHeight, 100]);
 
-	var highlightCheck = document.getElementById("highlight-check");
-	var highlightCheckSpan = document.getElementById("checkbox");
-	var highlight = highlightCheck.checked;
-
-	highlightCheck.onchange = function() {
-	  highlight = highlightCheck.checked;
-	}
-
-	highlightCheckSpan.onclick = function(e) {
-	  if (e.target === highlightCheck) return;
-	  highlight = highlightCheck.checked = !highlightCheck.checked;
-	}
+	var highlight = true;
+	var lastZoomEvent;
+	var branchLocked = false;
 
 	var diagonal = d3.svg.diagonal()
 	  .projection(function(d) {
@@ -98,7 +88,9 @@
 	  .attr("height", chartAreaHeight)
 	  .call(zoom)
 	  .append("g")
-	  .attr("transform", "translate(20,35)");
+	  .attr("id", "main")
+	  .append("g")
+	  .attr("transform", "translate(20,35)scale(1)");
 
 	var chartSvg = d3.select("#chartSvg");
 
@@ -143,7 +135,7 @@
 	    .attr("y", -barHeight / 2)
 	    .attr("height", barHeight)
 	    .attr("width", barWidth)
-	    .style("fill", color)
+	    .style("fill", utils.color)
 	    .attr("id", function(d) {
 	      return '_' + d._id;
 	    })
@@ -156,7 +148,7 @@
 	    .attr("dx", 10)
 	    .text(function(d) {
 	      if (d.decision !== "null")
-	        return constraintParser(d.decision);
+	        return utils.constraintParser(d.decision);
 	      return d.result;
 	    });
 
@@ -175,7 +167,7 @@
 	    })
 	    .style("opacity", 1)
 	    .select("rect")
-	    .style("fill", color);
+	    .style("fill", utils.color);
 
 	  // Transition exiting nodes to the parent's new position.
 	  node.exit().transition()
@@ -193,26 +185,11 @@
 	  });
 	}
 
-	// function collapseDesds(d) {
-	//   if (d.children) {
-	//     d._children = d.children;
-	//     d.children = null;
-	//   } else {
-	//     d.children = d._children;
-	//     d._children = null;
-	//   }
-	//   // console.log(d);
-	//   update(d);
-	//   var children = d.children || d._children;
-	//   if (children != null) {
-	//     children.forEach(function(child) {
-	//       collapseDesds(child);
-	//     });
-	//   }
-	// }
-
 	// Toggle children on click.
 	function click(d) {
+	  if (branchLocked) {
+	    return;
+	  }
 	  if (d.children) {
 	    d._children = d.children;
 	    d.children = null;
@@ -223,20 +200,15 @@
 	  update(d);
 	}
 
-	function highlightCode(d) {
-	  var lineNumber = d && (d.lineNumber || d.parent && d.parent.lineNumber);
-	  if (lineNumber) {
-	    d3.select("#line-" + lineNumber).classed("highlight", true);
-	  }
-	}
-
 	function hover(d) {
+	  if (branchLocked) {
+	    return;
+	  }
 	  if (highlight) {
-	    d3.selectAll('rect').style("fill", lightenColor);
+	    d3.selectAll('rect').style("fill", utils.lightenColor);
 	  }
 	  var parent = d;
 	  while (parent) {
-	    highlightCode(parent);
 	    if (highlight) {
 	      d3.select('#_' + parent._id).style("fill", 'blue');
 	    }
@@ -245,8 +217,10 @@
 	}
 
 	function mouseout(d) {
-	  d3.selectAll(".code-line").classed("highlight", false);
-	  d3.selectAll('rect').style("fill", color);
+	  if (!branchLocked) {
+	    d3.selectAll(".code-line").classed("highlight", false);
+	    d3.selectAll('rect').style("fill", utils.color);
+	  }
 	}
 
 	function updateAll(node) {
@@ -259,68 +233,159 @@
 	  });
 	}
 
+	function listStatuses(obj, filter) {
+	  if (obj[filter]) {
+	    var branches = document.getElementById('branches');
+	    var span = document.createElement("span");
+	    span.className = "branch";
+	    span.id = obj._id;
+	    span.innerHTML = '<i class="fa fa-caret-right"></i>&nbsp&nbsp' + obj.result;
+	    span.onmouseover = branchHover;
+	    span.onmouseout = mouseout;
+	    span.onclick = branchClick;
+	    branches.appendChild(span);
+	  }
+	  if (obj.children) {
+	    obj.children.forEach(function(child) {
+	      listStatuses(child, filter);
+	    });
+	  }
+	}
+
+	function branchClick(e) {
+	  var d = d3.select('#_' + e.target.id).data()[0];
+	  var action = e.target.firstChild.className === 'fa fa-caret-right' ? 'open' : 'close';
+	  e.target.firstChild.className = action === 'open' ? 'fa fa-caret-down' : 'fa fa-caret-right';
+	  if (action === 'open') {
+	    while (d) {
+	      var branches = document.getElementById('branches');
+	      var span = document.createElement("span");
+	      span.className = "sub sub-" + e.target.id;
+	      span.id = d._id;
+	      span.innerHTML = d.result || utils.constraintParser(d.decision);
+	      span.onmouseover = branchHover;
+	      span.onclick = branchLock;
+	      span.onmouseout = mouseout;
+	      branches.insertBefore(span, e.target.nextSibling);
+	      d = d.parent;
+	    }
+	  } else {
+	    if (document.getElementsByClassName('sub-' + e.target.id + ' locked').length > 0) {
+	      branchLocked = false;
+	    }
+	    d3.selectAll(".sub-" + e.target.id).remove();
+	  }
+	  centerBranch(e.target);
+	}
+
+	function centerBranch(target) {
+	  d3.select('.centered').classed('centered', false);
+	  d3.select('#_' + target.id).classed('centered', true);
+
+	  var trans = document.getElementById('_' + target.id).parentNode.getAttribute('transform');
+
+	  var rectCoor = utils.translationParser(trans);
+	  var rectX = parseInt(rectCoor[0]);
+	  var rectY = parseInt(rectCoor[1]);
+
+	  var svg = document.getElementById("chartSvg");
+	  var rect = document.getElementsByTagName("rect")[0];
+
+	  var svgW = parseInt(svg.getAttribute('width'));
+	  var svgH = parseInt(svg.getAttribute('height'));
+
+	  var rectW = parseInt(rect.getAttribute('width'));
+	  var rectH = parseInt(rect.getAttribute('height'));
+
+	  var zoomTrans = vis.attr("transform");
+	  var zoomTranslate = zoomTrans.substring(0, zoomTrans.indexOf('scale'));
+	  var scale = zoomTrans.substring(zoomTrans.indexOf("scale") + 6, zoomTrans.length - 1);
+
+	  var transl = utils.translationParser(zoomTranslate);
+	  var translate = [
+	    (svgW / 2 - rectW / 2 - parseInt(transl[0]) - rectX) * scale + 25,
+	    (svgH / 2 - rectH / 2 - parseInt(transl[1]) - rectY) * scale + 35
+	  ];
+
+	  d3.select('#main')
+	    .transition()
+	    .duration(duration)
+	    .attr("transform", "translate(" + translate + ")");
+	}
+
+	function branchLock(e) {
+	  if (branchLocked && e.target.classList.contains('locked')) {
+	    branchLocked = false;
+	    e.target.removeChild(e.target.firstChild);
+	    e.target.classList.remove('locked');
+	  } else if (!branchLocked) {
+	    branchLocked = true;
+	    e.target.innerHTML = '<i class="fa fa-lock"></i>' + e.target.innerHTML;
+	    e.target.classList.add('locked');
+	  }
+	  centerBranch(e.target);
+	}
+
+	function branchHover(e) {
+	  if (!branchLocked) {
+	    var hovered = document.getElementsByClassName('hovered');
+	    if (hovered.length > 0) {
+	      hovered[0].classList.remove('hovered');
+	    }
+	    e.target.classList.add('hovered');
+	    var d = d3.select('#_' + e.target.id).data()[0];
+	    hover(d);
+	  }
+	}
+
+	function appendBranchesTitle(title) {
+	  document.getElementById('branches-title').innerHTML = title + ' Branches';
+	}
+
 	exports.expandErrors = function() {
-	  expandErr(json, 'error');
-	  update(json);
+	  appendBranchesTitle('ERROR');
+	  expandStatus(json, 'hasError');
+	  expandGeneral(json);
+	  listStatuses(json, 'isError');
 	}
 
 	exports.expandOK = function() {
-	  expandErr(json, 'ok');
-	  update(json);
+	  appendBranchesTitle('OK');
+	  expandStatus(json, 'hasOK');
+	  expandGeneral(json);
+	  listStatuses(json, 'isOK');
 	}
 
 	exports.expandDontKnow = function() {
-	  expandErr(json, 'dontknow');
+	  appendBranchesTitle('DONT_KNOW');
+	  expandStatus(json, 'hasDontKnow');
+	  expandGeneral(json);
+	  listStatuses(json, 'isDontKnow');
+	}
+
+	function expandGeneral(json) {
+	  branchLocked = false;
+	  utils.removeChildrenOf('branches');
 	  update(json);
 	}
 
-	function expandErr(d, filter) {
+	function expandStatus(d, filter) {
 	  var children = d._children || d.children;
-	  var has;
-	  if (filter === 'error') {
-	    has = d.hasError;
-	  } else if (filter === 'ok') {
-	    has = d.hasOK;
-	  } else {
-	    has = d.hasDontKnow;
-	  }
-	  if (has) {
+	  if (d[filter]) {
 	    d.children = children;
 	    d._children = null;
-	  } else if (!has && d.children) {
+	  } else if (!d[filter] && d.children) {
 	    d._children = d.children;
 	    d.children = null;
 	  }
 	  if (children) {
-	    expandErr(children[0], filter);
-	    expandErr(children[1], filter);
+	    expandStatus(children[0], filter);
+	    expandStatus(children[1], filter);
 	  }
 	}
 
-	function lightenColor(d) {
-	  if (d._children) return "#83b4d7";
-	  if (d.children) return "#d1e2f2";
-	  if (d.result && d.result.startsWith("OK")) return "#aaffaa";
-	  if (d.result && d.result.startsWith("ERROR")) return "#ff7f7f";
-	  else return "#fdba8a";
-	}
-
-	function color(d) {
-	  if (d._children) return "#3182bd";
-	  if (d.children) return "#c6dbef";
-	  if (d.result && d.result.startsWith("OK")) return "#5f5";
-	  if (d.result && d.result.startsWith("ERROR")) return "#f00";
-	  else return "#fd8d3c";
-	}
-
-	function constraintParser(constraint) {
-	  var result = constraint.substring(1, constraint.length - 1);
-	  result = result.split("'").join("");
-	  result = result.split("(double)").join("");
-	  return result;
-	}
-
 	exports.loadJsonToChart = function(_json) {
+	  branchLocked = false;
 	  json = _json;
 	  json.x0 = 0;
 	  json.y0 = 0;
@@ -9903,198 +9968,23 @@
 	}();
 
 /***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	module.exports = function() {
-	  var enter = null,
-	    update = null,
-	    exit = null,
-	    data = [],
-	    dataid = null,
-	    svg = null,
-	    viewport = null,
-	    totalRows = 0,
-	    position = 0,
-	    rowHeight = 24,
-	    totalHeight = 0,
-	    minHeight = 0,
-	    viewportHeight = 0,
-	    visibleRows = 0,
-	    delta = 0,
-	    dispatch = d3.dispatch("pageDown", "pageUp");
-
-	  function virtualscroller(container) {
-	    function render(resize) {
-	      if (resize) { // re-calculate height of viewport and # of visible row
-	        viewportHeight = parseInt(viewport.style("height"));
-	        visibleRows = Math.ceil(viewportHeight / rowHeight) + 1; // add 1 more row for extra overlap; avoids visible add/remove at top/bottom 
-	      }
-	      var scrollTop = viewport.node().scrollTop;
-	      totalHeight = Math.max(minHeight, (totalRows * rowHeight));
-	      svg.style("height", totalHeight + "px") // both style and attr height values seem to be respected
-	        .attr("height", totalHeight);
-	      var lastPosition = position;
-	      position = Math.floor(scrollTop / rowHeight);
-	      delta = position - lastPosition;
-	      scrollRenderFrame(position);
-	    }
-
-
-	    function scrollRenderFrame(scrollPosition) {
-	      container.attr("transform", "translate(0," + (scrollPosition * rowHeight) + ")"); // position viewport to stay visible
-	      var position0 = Math.max(0, Math.min(scrollPosition, totalRows - visibleRows + 1)), // calculate positioning (use + 1 to offset 0 position vs totalRow count diff) 
-	        position1 = position0 + visibleRows;
-	      container.each(function() { // slice out visible rows from data and display
-	        var rowSelection = container.selectAll(".row")
-	          .data(data.slice(position0, Math.min(position1, totalRows)), dataid);
-	        rowSelection.exit().call(exit).remove();
-	        rowSelection.enter().append("g")
-	          .attr("class", "row")
-	          .call(enter);
-	        rowSelection.order();
-	        var rowUpdateSelection = container.selectAll(".row:not(.transitioning)"); // do not position .transitioning elements
-	        rowUpdateSelection.call(update);
-	        rowUpdateSelection.each(function(d, i) {
-	          d3.select(this).attr("transform", function(d) {
-	            return "translate(0," + ((i * rowHeight)) + ")";
-	          });
-	        });
-	      });
-
-	      if (position1 > (data.length - visibleRows)) { // dispatch events 
-	        dispatch.pageDown({
-	          delta: delta
-	        });
-	      } else if (position0 < visibleRows) {
-	        dispatch.pageUp({
-	          delta: delta
-	        });
-	      }
-	    }
-
-	    virtualscroller.render = render; // make render function publicly visible 
-	    viewport.on("scroll.virtualscroller", render); // call render on scrolling event
-	    render(true); // call render() to start
-	  }
-
-	  virtualscroller.render = function(resize) { // placeholder function that is overridden at runtime
-	  };
-
-	  virtualscroller.data = function(_, __) {
-	    if (!arguments.length) return data;
-	    data = _;
-	    dataid = __;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.dataid = function(_) {
-	    if (!arguments.length) return dataid;
-	    dataid = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.enter = function(_) {
-	    if (!arguments.length) return enter;
-	    enter = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.update = function(_) {
-	    if (!arguments.length) return update;
-	    update = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.exit = function(_) {
-	    if (!arguments.length) return exit;
-	    exit = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.totalRows = function(_) {
-	    if (!arguments.length) return totalRows;
-	    totalRows = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.rowHeight = function(_) {
-	    if (!arguments.length) return rowHeight;
-	    rowHeight = +_;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.totalHeight = function(_) {
-	    if (!arguments.length) return totalHeight;
-	    totalHeight = +_;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.minHeight = function(_) {
-	    if (!arguments.length) return minHeight;
-	    minHeight = +_;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.position = function(_) {
-	    if (!arguments.length) return position;
-	    position = +_;
-	    if (viewport) {
-	      viewport.node().scrollTop = position;
-	    }
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.svg = function(_) {
-	    if (!arguments.length) return svg;
-	    svg = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.viewport = function(_) {
-	    if (!arguments.length) return viewport;
-	    viewport = _;
-	    return virtualscroller;
-	  };
-
-	  virtualscroller.delta = function() {
-	    return delta;
-	  };
-
-	  d3.rebind(virtualscroller, dispatch, "on");
-
-	  return virtualscroller;
-	};
-
-
-/***/ },
+/* 3 */,
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var d3 = __webpack_require__(2);
 	var visChart = __webpack_require__(1);
+	var utils = __webpack_require__(5);
 
 	var id = 0;
 	var simpleJson;
 	var complexJson;
-
-	function $id(id) {
-	  return document.getElementById(id);
-	}
-
-	function outputCodeLine(line, i) {
-	  line = line.split(" ").join("&nbsp;");
-	  var code = $id('code');
-	  var span = document.createElement("span");
-	  span.className = "code-line";
-	  span.id = "line-" + i;
-	  span.innerHTML = line;
-	  code.appendChild(span);
-	}
+	var currJson;
 
 	function largeDemo() {
+	  utils.removeChildrenOf('branches');
 	  if (!complexJson) {
-	    d3.json("data/demo3.json", function(json) {
+	    d3.json("data/test_m1.jpf", function(json) {
 	      preprocessJson(json);
 	      complexJson = json;
 	      visChart.loadJsonToChart(json);
@@ -10105,6 +9995,7 @@
 	}
 
 	function smallDemo() {
+	  utils.removeChildrenOf('branches');
 	  if (!simpleJson) {
 	    d3.json("data/demo2.json", function(json) {
 	      preprocessJson(json);
@@ -10114,54 +10005,18 @@
 	  } else {
 	    visChart.loadJsonToChart(simpleJson);
 	  }
-	  json.code.forEach(function(line, i) {
-	    outputCodeLine(line, i + 1);
-	  });
-	}
-
-	function init() {
-	  var target = 'data/';
-	  // if (location.pathname === '/') {
-	  //   target += 'demo2.json';
-	  //   // simpleJson = json;
-	  //   json.code.forEach(function(line, i) {
-	  //     outputCodeLine(line, i + 1);
-	  //   });
-	  // } else {
-	    target += location.pathname.substring(1);
-	  // }
-
-	  d3.json(target, function(json) {
-	    preprocessJson(json);
-	    visChart.loadJsonToChart(json);
-	  });
-
-	  $id('expand-errors').onclick = visChart.expandErrors;
-	  $id('expand-ok').onclick = visChart.expandOK;
-	  $id('expand-dontknow').onclick = visChart.expandDontKnow;
-	  $id('small-demo').onclick = smallDemo;
-	  $id('large-demo').onclick = largeDemo;
 	}
 
 	function preprocessJson(obj) {
 	  if (obj.result && obj.result.startsWith('ERROR')) {
-	    var tmp = obj;
-	    while (tmp) {
-	      tmp.hasError = true;
-	      tmp = tmp.parent;
-	    }
+	    obj.isError = true;
+	    addStatusToAncestors(obj, 'hasError');
 	  } else if (obj.result && obj.result.startsWith('OK')) {
-	    var tmp = obj;
-	    while (tmp) {
-	      tmp.hasOK = true;
-	      tmp = tmp.parent;
-	    }
+	    obj.isOK = true;
+	    addStatusToAncestors(obj, 'hasOK');
 	  } else if (obj.result && obj.result.startsWith('DONT_KNOW')) {
-	    var tmp = obj;
-	    while (tmp) {
-	      tmp.hasDontKnow = true;
-	      tmp = tmp.parent;
-	    }
+	    obj.isDontKnow = true;
+	    addStatusToAncestors(obj, 'hasDontKnow');
 	  }
 	  obj._id = id++;
 	  if (obj.children) {
@@ -10170,7 +10025,40 @@
 	      preprocessJson(child);
 	    });
 	  }
+	  currJson = obj;
 	}
+
+	function init() {
+	  var target = 'data/' + location.pathname.substring(1);
+	  if (target === 'data/') {
+	    target = 'data/demo2.json';
+	  }
+	  d3.json(target, function(json) {
+	    preprocessJson(json);
+	    visChart.loadJsonToChart(json);
+	    // document.getElementById('expand-errors').click();
+	  });
+
+	  document.getElementById('expand-errors').onclick = visChart.expandErrors;
+	  document.getElementById('expand-ok').onclick = visChart.expandOK;
+	  document.getElementById('expand-dontknow').onclick = visChart.expandDontKnow;
+	  document.getElementById('small-demo').onclick = smallDemo;
+	  document.getElementById('large-demo').onclick = largeDemo;
+	}
+
+	function addStatusToAncestors(curr, status) {
+	  while (curr) {
+	    curr[status] = true;
+	    curr = curr.parent;
+	  }
+	}
+
+	init();
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
 
 	if (!String.prototype.startsWith) {
 	  String.prototype.startsWith = function(searchString, position) {
@@ -10179,7 +10067,41 @@
 	  };
 	}
 
-	init();
+	exports.lightenColor = function(d) {
+	  if (d._children) return "#83b4d7";
+	  if (d.children) return "#d1e2f2";
+	  if (d.result && d.result.startsWith("OK")) return "#aaffaa";
+	  if (d.result && d.result.startsWith("ERROR")) return "#ff7f7f";
+	  else return "#fdba8a";
+	}
+
+	exports.color = function(d) {
+	  if (d._children) return "#3182bd";
+	  if (d.children) return "#c6dbef";
+	  if (d.result && d.result.startsWith("OK")) return "#5f5";
+	  if (d.result && d.result.startsWith("ERROR")) return "#f00";
+	  else return "#fd8d3c";
+	}
+
+	exports.constraintParser = function(constraint) {
+	  var result = constraint.substring(1, constraint.length - 1);
+	  result = result.split("'").join("");
+	  result = result.split("(double)").join("");
+	  return result;
+	}
+
+	exports.translationParser = function(trans) {
+	  var result = trans.substring(10, trans.length - 1);
+	  result = result.split(",");
+	  return result;
+	}
+
+	exports.removeChildrenOf = function(id) {
+	  var node = document.getElementById(id);
+	  while (node.firstChild) {
+	    node.removeChild(node.firstChild);
+	  }
+	}
 
 
 /***/ }

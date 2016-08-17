@@ -1,5 +1,4 @@
 @import "predefine";
-// @import "sidebar";
 body {
   font-weight: 400;
   font-family: "Lato", sans-serif;
@@ -7,35 +6,55 @@ body {
     position: absolute;
     top: 30px;
     bottom: 51px;
-    left: 20px;
-    right: 20px;
+    left: 40px;
+    right: 40px;
   }
 }
 
-#code-area {
+#branch-area {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  width: 450px;
-  #code {
+  right: 0;
+  width: 350px;
+  #branches {
     @extend .component;
-    padding-top: 10px;
-    font-size: 12px;
+    font-size: 14px;
     min-width: 200px;
-    // border: 1px solid #bbb;
+    border: 1px solid #bbb;
+    color: #345;
     border-radius: 5px;
     overflow: auto;
-    background: rgba(44, 44, 39, 1);
-    color: rgba(248, 248, 242, 1);
     line-height: 1.5;
-    .code-line {
-      padding: 0 10px;
+    .branch {
+      @extend .noselect;
+      padding: 10px 0 10px 15px;
       display: block;
+      cursor: default;
+      &:nth-child(even) {
+        background: #fcf8e3;
+      }
+      &:nth-child(odd) {
+        background: #dff0d8;
+      }
+      &.hovered {
+        background: rgba(162, 191, 221, 0.8);
+      }
     }
-    .highlight {
-      background: rgba(64, 200, 255, 1);
-      color: #000;
+    .sub {
+      @extend .noselect;
+      padding: 5px 0 5px 35px;
+      display: block;
+      cursor: default;
+      &:hover {
+        background: rgba(162, 191, 221, 0.8);
+      }
+      &.locked {
+        background: rgba(125, 123, 255, 0.95);
+      }
+      i {
+        margin-right: 10px;
+      }
     }
   }
 }
@@ -44,9 +63,8 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 463px;
-  right: 0;
-  // min-width: 400px;
+  left: 0;
+  right: 363px;
   #tools {
     position: absolute;
     top: 0;
@@ -60,34 +78,9 @@ body {
     float: right;
     margin-left: 5px;
   }
-  // #expand-errors {
-  //   position: absolute;
-  //   top: 0;
-  //   right: 5px;
-  // }
-  // #expand-dontknow {
-  //   position: absolute;
-  //   top: 0;
-  //   right: 95px;
-  // }
-  // #expand-ok {
-  //   position: absolute;
-  //   top: 0;
-  //   right: 222px;
-  // }
   #checkbox {
     font-size: 12px;
   }
-  //   position: absolute;
-  //   top: 0;
-  //   right: 310px;
-  //   cursor: default;
-  // }
-  // #switch-demo {
-  //   position: absolute;
-  //   top: 0;
-  //   left: 5px;
-  // }
   #chart {
     @extend .component;
     min-width: 400px;
@@ -100,6 +93,10 @@ body {
       stroke: #3182bd;
       stroke-width: 1px;
       // cursor: pointer;
+      &.centered {
+        stroke: red;
+        stroke-width: 2px;
+      }
     }
     .node text {
       font-size: 14px;

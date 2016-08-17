@@ -1,4 +1,4 @@
-.component, #code-area #code, #chart-area #chart {
+.component, #branch-area #branches, #chart-area #chart {
   position: absolute;
   top: 30px;
   bottom: 0;
@@ -14,6 +14,19 @@
   position: absolute;
   right: 20px; }
 
+.noselect, #branch-area #branches .branch, #branch-area #branches .sub {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently not supported by any browser */ }
+
 body {
   font-weight: 400;
   font-family: "Lato", sans-serif; }
@@ -21,37 +34,50 @@ body {
     position: absolute;
     top: 30px;
     bottom: 51px;
-    left: 20px;
-    right: 20px; }
+    left: 40px;
+    right: 40px; }
 
-#code-area {
+#branch-area {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  width: 450px; }
-  #code-area #code {
-    padding-top: 10px;
-    font-size: 12px;
+  right: 0;
+  width: 350px; }
+  #branch-area #branches {
+    font-size: 14px;
     min-width: 200px;
+    border: 1px solid #bbb;
+    color: #345;
     border-radius: 5px;
     overflow: auto;
-    background: #2c2c27;
-    color: #f8f8f2;
     line-height: 1.5; }
-    #code-area #code .code-line {
-      padding: 0 10px;
-      display: block; }
-    #code-area #code .highlight {
-      background: #40c8ff;
-      color: #000; }
+    #branch-area #branches .branch {
+      padding: 10px 0 10px 15px;
+      display: block;
+      cursor: default; }
+      #branch-area #branches .branch:nth-child(even) {
+        background: #fcf8e3; }
+      #branch-area #branches .branch:nth-child(odd) {
+        background: #dff0d8; }
+      #branch-area #branches .branch.hovered {
+        background: rgba(162, 191, 221, 0.8); }
+    #branch-area #branches .sub {
+      padding: 5px 0 5px 35px;
+      display: block;
+      cursor: default; }
+      #branch-area #branches .sub:hover {
+        background: rgba(162, 191, 221, 0.8); }
+      #branch-area #branches .sub.locked {
+        background: rgba(125, 123, 255, 0.95); }
+      #branch-area #branches .sub i {
+        margin-right: 10px; }
 
 #chart-area {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 463px;
-  right: 0; }
+  left: 0;
+  right: 363px; }
   #chart-area #tools {
     position: absolute;
     top: 0;
@@ -72,6 +98,9 @@ body {
       fill-opacity: 0.5;
       stroke: #3182bd;
       stroke-width: 1px; }
+      #chart-area #chart .node rect.centered {
+        stroke: red;
+        stroke-width: 2px; }
     #chart-area #chart .node text {
       font-size: 14px;
       pointer-events: none; }

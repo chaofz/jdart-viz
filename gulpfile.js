@@ -1,6 +1,5 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
-var uglify = require('gulp-uglify');
 var connect = require('gulp-connect');
 var webpack = require('gulp-webpack');
 var browserSync = require('browser-sync').create();
@@ -20,6 +19,14 @@ gulp.task('sass:watch', function() {
   gulp.watch('sass/*.scss', ['sass']);
 });
 
+gulp.task('webpack', function() {
+  return gulp.src('src/app.js')
+    .pipe(webpack({
+      output: { filename: 'bundle.js' }
+    }))
+    .pipe(gulp.dest('asset/js'));
+});
+
 gulp.task('webpack:watch', function() {
   return gulp.src('src/app.js')
     .pipe(webpack({
@@ -28,7 +35,6 @@ gulp.task('webpack:watch', function() {
       },
       watch: true
     }))
-    // .pipe(uglify())
     .pipe(gulp.dest('asset/js'));
 });
 
@@ -51,11 +57,4 @@ gulp.task('browser:watch', ['browserSync'], function() {
 });
 
 gulp.task('dev', ['browser:watch', 'webpack:watch', 'sass:watch']);
-
-// gulp.task('dev', ['browserSync', 'sass', 'webpack:watch'], function() {
-//   gulp.watch('sass/*.scss', ['sass']);
-
-//   gulp.watch('*.html', browserSync.reload);
-//   gulp.watch('asset/css/*.css', browserSync.reload);
-//   gulp.watch('asset/js/*.js', browserSync.reload);
-// });
+gulp.task('build', ['webpack', 'sass']);
