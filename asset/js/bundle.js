@@ -55,7 +55,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var d3 = __webpack_require__(2);
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(3);
 
 	var chartAreaWidth = parseInt(d3.select('#chart').style('width'));
 	var chartAreaHeight = parseInt(d3.select('#chart').style('height'));
@@ -66,8 +66,7 @@
 	var barHeight = 30;
 	var barWidth = chartAreaWidth - 150;
 	var duration = 400;
-	var tree = d3.layout.tree()
-	  .size([chartAreaHeight, 100]);
+	var tree = d3.layout.tree().size([chartAreaHeight, 100]);
 
 	var highlight = true;
 	var lastZoomEvent;
@@ -9968,13 +9967,60 @@
 	}();
 
 /***/ },
-/* 3 */,
+/* 3 */
+/***/ function(module, exports) {
+
+	if (!String.prototype.startsWith) {
+	  String.prototype.startsWith = function(searchString, position) {
+	    position = position || 0;
+	    return this.indexOf(searchString, position) === position;
+	  };
+	}
+
+	exports.lightenColor = function(d) {
+	  if (d._children) return "#83b4d7";
+	  if (d.children) return "#d1e2f2";
+	  if (d.result && d.result.startsWith("OK")) return "#aaffaa";
+	  if (d.result && d.result.startsWith("ERROR")) return "#ff7f7f";
+	  else return "#fdba8a";
+	}
+
+	exports.color = function(d) {
+	  if (d._children) return "#3182bd";
+	  if (d.children) return "#c6dbef";
+	  if (d.result && d.result.startsWith("OK")) return "#5f5";
+	  if (d.result && d.result.startsWith("ERROR")) return "#f00";
+	  else return "#fd8d3c";
+	}
+
+	exports.constraintParser = function(constraint) {
+	  var result = constraint.substring(1, constraint.length - 1);
+	  result = result.split("'").join("");
+	  result = result.split("(double)").join("");
+	  return result;
+	}
+
+	exports.translationParser = function(trans) {
+	  var result = trans.substring(10, trans.length - 1);
+	  result = result.split(",");
+	  return result;
+	}
+
+	exports.removeChildrenOf = function(id) {
+	  var node = document.getElementById(id);
+	  while (node.firstChild) {
+	    node.removeChild(node.firstChild);
+	  }
+	}
+
+
+/***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var d3 = __webpack_require__(2);
 	var visChart = __webpack_require__(1);
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(3);
 
 	var id = 0;
 	var simpleJson;
@@ -10054,54 +10100,6 @@
 	}
 
 	init();
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	if (!String.prototype.startsWith) {
-	  String.prototype.startsWith = function(searchString, position) {
-	    position = position || 0;
-	    return this.indexOf(searchString, position) === position;
-	  };
-	}
-
-	exports.lightenColor = function(d) {
-	  if (d._children) return "#83b4d7";
-	  if (d.children) return "#d1e2f2";
-	  if (d.result && d.result.startsWith("OK")) return "#aaffaa";
-	  if (d.result && d.result.startsWith("ERROR")) return "#ff7f7f";
-	  else return "#fdba8a";
-	}
-
-	exports.color = function(d) {
-	  if (d._children) return "#3182bd";
-	  if (d.children) return "#c6dbef";
-	  if (d.result && d.result.startsWith("OK")) return "#5f5";
-	  if (d.result && d.result.startsWith("ERROR")) return "#f00";
-	  else return "#fd8d3c";
-	}
-
-	exports.constraintParser = function(constraint) {
-	  var result = constraint.substring(1, constraint.length - 1);
-	  result = result.split("'").join("");
-	  result = result.split("(double)").join("");
-	  return result;
-	}
-
-	exports.translationParser = function(trans) {
-	  var result = trans.substring(10, trans.length - 1);
-	  result = result.split(",");
-	  return result;
-	}
-
-	exports.removeChildrenOf = function(id) {
-	  var node = document.getElementById(id);
-	  while (node.firstChild) {
-	    node.removeChild(node.firstChild);
-	  }
-	}
 
 
 /***/ }
