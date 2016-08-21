@@ -1,4 +1,5 @@
 node_modules/
 asset/
-gsoc/
+description/
 sftp-config.json
+.npmignore

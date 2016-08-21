@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+
 var path = require('path');
 var open = require("open");
 var express = require('express');
@@ -24,11 +25,14 @@ if (target === 'serve') {
   });
 } else {
   console.log('Executing jpf...');
-  exec('jpf ' + target, {maxBuffer: MAX_BUFFER}, function(err, stdout, stderr) {
-    if(err) {
+  exec('jpf ' + target, { maxBuffer: MAX_BUFFER }, function(err, stdout, stderr) {
+    if (err) {
       console.log(err);
     }
     exec('mv tree.json ~/jdart-vis/data/' + target, function(err, stdout, stderr) {
+      if (err) {
+        console.log(err);
+      }
       open("http://localhost:" + PORT + '/' + target);
     });
   });

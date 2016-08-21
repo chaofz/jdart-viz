@@ -1,6 +1,6 @@
 sass/
 src/
-gsoc/
+description/
 .git
 .gitignore
 gulpfile.js
