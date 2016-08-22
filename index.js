@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+var fs = require('fs');
 var path = require('path');
 var open = require("open");
 var express = require('express');
@@ -29,7 +30,11 @@ if (target === 'serve') {
     if (err) {
       console.log(err);
     }
-    exec('mv tree.json ~/jdart-vis/data/' + target, function(err, stdout, stderr) {
+    if (!fs.existsSync(target + '.json')) { 
+      console.log('Cannot find result json file');
+      return;
+    }
+    exec('mv ' + target + '.json ' + __dirname + '/data/' + target, function(err, stdout, stderr) {
       if (err) {
         console.log(err);
       }
