@@ -34,7 +34,7 @@ if (target === 'serve') {
       console.log('Cannot find result json file');
       return;
     }
-    exec('mv ' + target + '.json ' + __dirname + '/data/' + target, function(err, stdout, stderr) {
+    exec('cp ' + target + '.json ' + __dirname + '/data/' + target, function(err, stdout, stderr) {
       if (err) {
         console.log(err);
       }
