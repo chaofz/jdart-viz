@@ -33,6 +33,12 @@ JDart-Viz requires jpf, which JDart is based on and you have just installed, on 
 
 First, install Node.js on your machine. If you have already installed node (with npm), you can skip to the next step. There are various ways to install node. Details can be found on [nodejs.org](https://nodejs.org/en/).
 
+If you are using Ubuntu or Debian, node on these OS's is named as nodejs. So, please link `nodejs` to `node` by 
+
+```sh
+sudo ln -s $(which nodejs) /usr/bin/node
+```
+
 Second, install Gulp:
 
 ```sh
